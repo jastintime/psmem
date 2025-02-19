@@ -34,7 +34,7 @@ void printSizes(program p) {
 	calculateSize(p.shared_mem);
 	printf(" = ");
 	calculateSize(p.private_mem + p.shared_mem);
-	printf("\t%s", p.name);
+	printf("\t%.*s",NAME_SIZE - 1, p.name);
 	if (p.count > 0) {
 		printf(" (%d)", p.count);
 	}

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <dirent.h>
+#include <string.h>
 #include "psmem.h"
 
 int all_digits(const char *str) {
@@ -18,7 +19,8 @@ int main(void) {
 	double total = 0.0;
 	program curr_program;
 	struct dirent *curr;
-	/* pull this out and early return */
+	/*initalize our struct for safety, worst case scenario we print all zeroes */
+	memset(&curr_program, 0, sizeof(curr_program)); 
 	if (!dp) {
 		return 1;
 	}
