@@ -29,19 +29,19 @@ psmem is written in a plain C style, try to avoid introducing new dependencies a
 
 ## Todo
 
-- [] use basename instead of long path
-- [] implement squashing together common processes, chromium (28) instead of multiple chromium rows
-- [] remove self from output
-- [] remove strings.h dependancy by replacing strcomp
-- [] Write tests
-- [] Check if proc is actually proc before doing anything
-- [] Check if `smaps` is enabled in `/proc/config.gz`
-- [] Fallback to `smaps` if we cannot find `smaps_rollup`
-- [] implement a -v option to list current version
-- [] implement freebsd support, requires viewing uname and setting proc accordingly
-- [] static binary, [cosmopolitan libc](https://github.com/jart/cosmopolitan) possibly
-- [] write a manpage
-    - [] determine if -h is a good idea or if the manpage is good enough.
+- [ ] use basename instead of long path
+- [ ] implement squashing together common processes, chromium (28) instead of multiple chromium rows
+- [ ] remove self from output
+- [ ] remove strings.h dependancy by replacing strcomp
+- [ ] Write tests
+- [ ] Check if proc is actually proc before doing anything
+- [ ] Check if `smaps` is enabled in `/proc/config.gz`
+- [ ] Fallback to `smaps` if we cannot find `smaps_rollup`
+- [ ] implement a -v option to list current version
+- [ ] implement freebsd support, requires viewing uname and setting proc accordingly
+- [ ] static binary, [cosmopolitan libc](https://github.com/jart/cosmopolitan) possibly
+- [ ] write a manpage
+    - [ ] determine if -h is a good idea or if the manpage is good enough.
 
 
 
