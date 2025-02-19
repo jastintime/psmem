@@ -1,10 +1,10 @@
 #define NAME_SIZE 512
+
 typedef struct {
 	double private_mem;
 	double shared_mem;
 	char name[NAME_SIZE];
 	int count;
-
 } program;
 
 void calculateSize(double);
