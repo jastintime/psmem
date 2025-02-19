@@ -6,7 +6,7 @@ CFLAGS = -O2 -Wall -Werror -Wextra -Winit-self -Wuninitialized -pedantic -ansi -
 
 
 psmem: smaps.o psmem.o output.o
-	$(CC) $(CFLAGS) -g -o  psmem $^
+	$(CC) $(CFLAGS) -g -o psmem $^
 
 %.o: src/%.c
 	$(CC) $(CFLAGS) -c -g $<
