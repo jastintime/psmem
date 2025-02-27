@@ -3,23 +3,23 @@
 .PHONY: clean all
 
 CC = cc
-CFLAGS = -O2 -Wall -Werror -Wextra -Winit-self -Wuninitialized -pedantic -ansi -D_DEFAULT_SOURCE -Wunreachable-code
+CFLAGS = -O2 -g -Wall -Werror -Wextra -Winit-self -Wuninitialized -pedantic -ansi -D_DEFAULT_SOURCE -Wunreachable-code
 
 OBJS = smaps.o psmem.o output.o
 
 all: psmem
 
 psmem: $(OBJS)
-	$(CC) $(CFLAGS) -g -o psmem $(OBJS)
+	$(CC) $(CFLAGS) -o psmem $(OBJS)
 
 smaps.o: src/smaps.c src/psmem.h
-	$(CC) $(CFLAGS) -c -g $<
+	$(CC) $(CFLAGS) -c $<
 
 psmem.o: src/psmem.c src/psmem.h
-	$(CC) $(CFLAGS) -c -g $<
+	$(CC) $(CFLAGS) -c $<
 
 output.o: src/output.c src/psmem.h
-	$(CC) $(CFLAGS) -c -g $<
+	$(CC) $(CFLAGS) -c $<
 
 clean:
 	-rm $(OBJS) psmem

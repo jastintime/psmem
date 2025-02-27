@@ -13,5 +13,6 @@ void printHeader(void);
 void printTotal(double);
 
 int read_proc(program*, const char *pid_dir);
+int getCmdName(char* cmdName, const char* pid_dir, int isParent);
 
 int all_digits(const char *str);

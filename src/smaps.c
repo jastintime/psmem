@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+#include <libgen.h>
 #include "psmem.h"
 
 /*
@@ -13,14 +15,15 @@ int read_proc(program* prog, const char *pid_dir) {
 	/* pid_dir = /proc/3152 
 	 * pid_max 32 bit is 32768 
 	 * sp is smaps_rollup, cp is cmdline */
-	FILE *sp,*cp;/**pp;*/
-	char smaps_rollup[512], cmdline[512];
+	FILE *sp;
+	char smaps_rollup[512];
 	double private = 0;
 	double private_huge = 0;
 	double shared_huge = 0;
 	double pss = 0;
 	double shared = 0;
 	int have_pss = 0;
+	char cmdName[512];
 	/* need to deal with the case that we have a really long
 	 * absolute directory, perhaps change to just cd'ing into
 	 * /proc and doing all our magic there
@@ -74,23 +77,84 @@ int read_proc(program* prog, const char *pid_dir) {
 	if(fclose(sp) == EOF) {
 		return -1;
 	}
-
-	if (sprintf(cmdline, "%s/cmdline", pid_dir) < 0) {
-		return -2;
-	}
-	cp = fopen(cmdline, "r");
-	if (!cp) {
-		return -1;
-	}
-
-	if (fgets(line, sizeof(line), cp) == NULL) {
-		return -2;
-	}
-	if (fclose(cp) == EOF) {
-		return -1;
-	}
 	/* limit this to name size %511s*/
-	sscanf(line, "%s", prog->name);
+	getCmdName(cmdName, pid_dir,0);
+	strcpy(prog->name, cmdName);
 	/* NOW WE NEED TO GET OUR PATH */
 	return 0;
+}
+
+int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
+	char cmdline_filename[512];
+	FILE *cp,*pp;
+	char cmdline[512];
+	char path_location[512];
+	char path[512];
+	char *exe;
+	char status_filename[512];
+	char proc_status[512];
+	char cmd[512];
+	char line[512];
+	char p_exe[512];
+	int ppid = 0;
+	sprintf(cmdline_filename, "%s/cmdline", pid_dir);
+	cp = fopen(cmdline_filename, "r");
+	fgets(cmdline, sizeof(line), cp);
+	/*missing while cmdline[-1] thing unsure of what it does */
+	fclose(cp);
+
+	sprintf(path_location, "%s/exe", pid_dir);
+	readlink(path_location, path, sizeof(path));
+	/*missing check for (deleted) and (updated) */
+	exe = basename(path);
+	if (isParent) {
+		strcpy(cmdName, exe);
+		return 0;
+	}
+	sprintf(status_filename, "%s/status", pid_dir);
+	pp = fopen(status_filename, "r");
+	fgets(proc_status, sizeof(proc_status), pp);
+	sscanf(proc_status, "%*31[^:]: %s",cmd);
+	while(fgets(line, sizeof(line), pp)) {
+		char key[512];
+		int value;
+		sscanf(line, "%31[^:]: %d", key, &value);;
+		if (strcmp(key, "PPid") == 0) { 
+			ppid = value;
+			break;
+		}
+	}
+	if (ppid) {
+		memset(&p_exe, 0, sizeof(p_exe)); 
+		getCmdName(p_exe, pid_dir, 1);
+	}
+	if (strcmp(exe, p_exe)) {
+		strcpy(cmd, exe);
+	}
+	fclose(pp);
+	strcpy(cmdName, cmd);
+	return 0;
+	
+
+
+
+
+
+
+
+
+
+
+	
+
+	
+
+
+
+
+
+
+	
+
+
 }
