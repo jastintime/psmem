@@ -17,8 +17,10 @@ int main(void) {
 	DIR* dp = opendir("/proc");
 	char path[16384];
 	double total = 0.0;
-	program curr_program;
+	struct program curr_program;
 	struct dirent *curr;
+	struct node *head;
+	head = NULL;
 	/*initalize our struct for safety, worst case scenario we print all zeroes */
 	memset(&curr_program, 0, sizeof(curr_program)); 
 	if (!dp) {
@@ -29,9 +31,13 @@ int main(void) {
 		if(curr->d_type == DT_DIR && all_digits(curr->d_name) == 0) {
 			sprintf(path, "/proc/%s", curr->d_name);
 			read_proc(&curr_program, path);
-			printSizes(curr_program);
+			prog_list_add(&head,curr_program);
 			total += curr_program.private_mem + curr_program.shared_mem;
 		}
+	}
+	while (head != NULL) {
+		printSizes(head->prog);
+		head = head->next;
 	}
 	printTotal(total);
 	closedir(dp);

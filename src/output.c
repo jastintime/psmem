@@ -28,7 +28,7 @@ void calculateSize(double rawSize) {
 	}
 }
 
-void printSizes(program p) {
+void printSizes(struct program p) {
 	calculateSize(p.private_mem);
 	printf(" + ");
 	calculateSize(p.shared_mem);
@@ -36,7 +36,7 @@ void printSizes(program p) {
 	calculateSize(p.private_mem + p.shared_mem);
 	printf("\t%.*s",NAME_SIZE - 1, p.name);
 	if (p.count > 0) {
-		printf(" (%d)", p.count);
+		printf(" (%d)", p.count + 1);
 	}
 	printf("\n");
 }

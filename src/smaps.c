@@ -9,7 +9,7 @@
  * errno setting error -1
  * -2 means unable to create smaps_rollup string
  */
-int read_proc(program* prog, const char *pid_dir) {
+int read_proc(struct program* prog, const char *pid_dir) {
 /*	char path[16384]; */
 	char line[BUFSIZ];
 	/* pid_dir = /proc/3152 
@@ -85,6 +85,7 @@ int read_proc(program* prog, const char *pid_dir) {
 }
 
 int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
+	/*TODO error handling misssing, removing all these nasty variables */
 	char cmdline_filename[512];
 	FILE *cp,*pp;
 	char cmdline[512];
