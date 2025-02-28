@@ -32,7 +32,7 @@ psmem is written in a plain C style, try to avoid introducing new dependencies a
 - [X] use basename instead of long path
 - [X] implement squashing together common processes, chromium (28) instead of multiple chromium rows
 - [] Sort output
-- [ ] remove self from output
+- [X] remove self from output
 - [ ] remove strings.h dependency by replacing strcomp
 - [ ] Write tests
 - [ ] Check if proc is actually proc before doing anything

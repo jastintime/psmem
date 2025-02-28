@@ -3,21 +3,23 @@
 #include <stdio.h>
 #include <string.h>
 
+
 int prog_list_add(struct node **head, struct program prog) {
-	struct node *newNode,*temp,*prev;
-	prev = NULL;
-	newNode = malloc(sizeof(struct node));
+	struct node *newNode,*temp;
+	newNode = (struct node*) malloc(sizeof(struct node));
 	if (!newNode) {
 		return -1;
 	}
 	newNode->prog = prog;
-	newNode->next = NULL;;
+	newNode->next = NULL;
 	if (*head == NULL) {
 		*head = newNode;
 		return 0;
 	}
 	temp = *head;
-	while (temp != NULL) {
+
+	while (temp->next != NULL) {
+		temp = temp->next;
 		if (strcmp(temp->prog.name,prog.name) == 0) {
 			temp->prog.private_mem += prog.private_mem;
 			temp->prog.shared_mem += prog.shared_mem;
@@ -25,15 +27,19 @@ int prog_list_add(struct node **head, struct program prog) {
 			free(newNode);
 			return 0;
 		}
-		prev = temp;
-		temp = temp->next;
 	}
-	newNode->next = temp;
-	prev->next = newNode;
+	temp->next = newNode;
 	return 0;
 }
+
+void prog_list_free(struct node **head) {
+	struct node* tmp;
+	while (*head != NULL) {
+		tmp = *head;
+		*head = (*head)->next;
+		free(tmp);
+	}
+}
+
 /*TODO sort this linked list */
-
-/*TODO free this list */
-
 

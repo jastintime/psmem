@@ -104,6 +104,8 @@ int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
 	/*missing while cmdline[-1] thing unsure of what it does */
 	fclose(cp);
 
+	memset(&p_exe, 0, sizeof(p_exe)); 
+	memset(&path, 0, sizeof(path)); 
 	sprintf(path_location, "%s/exe", pid_dir);
 	readlink(path_location, path, sizeof(path));
 	/*missing check for (deleted) and (updated) */
@@ -126,7 +128,6 @@ int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
 		}
 	}
 	if (ppid) {
-		memset(&p_exe, 0, sizeof(p_exe)); 
 		getCmdName(p_exe, pid_dir, 1);
 	}
 	if (strcmp(exe, p_exe)) {
@@ -135,27 +136,4 @@ int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
 	fclose(pp);
 	strcpy(cmdName, cmd);
 	return 0;
-	
-
-
-
-
-
-
-
-
-
-
-	
-
-	
-
-
-
-
-
-
-	
-
-
 }

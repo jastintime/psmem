@@ -23,3 +23,4 @@ struct node {
 };
 
 int prog_list_add(struct node ** head, struct program prog);
+void prog_list_free(struct node **head);
