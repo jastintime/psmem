@@ -44,6 +44,7 @@ int main(void) {
 			total += curr_program.private_mem + curr_program.shared_mem;
 		}
 	}
+	mergeSort(&head);
 	currnode = head;
 	while (currnode != NULL) {
 		printSizes(currnode->prog);

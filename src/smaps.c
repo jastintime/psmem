@@ -4,13 +4,7 @@
 #include <libgen.h>
 #include "psmem.h"
 
-/*
- * return 0 on success,
- * errno setting error -1
- * -2 means unable to create smaps_rollup string
- */
 int read_proc(struct program* prog, const char *pid_dir) {
-/*	char path[16384]; */
 	char line[BUFSIZ];
 	/* pid_dir = /proc/3152 
 	 * pid_max 32 bit is 32768 
@@ -23,7 +17,6 @@ int read_proc(struct program* prog, const char *pid_dir) {
 	double pss = 0;
 	double shared = 0;
 	int have_pss = 0;
-	char cmdName[512];
 	/* need to deal with the case that we have a really long
 	 * absolute directory, perhaps change to just cd'ing into
 	 * /proc and doing all our magic there
@@ -77,12 +70,10 @@ int read_proc(struct program* prog, const char *pid_dir) {
 	if(fclose(sp) == EOF) {
 		return -1;
 	}
-	/* limit this to name size %511s*/
-	getCmdName(cmdName, pid_dir,0);
-	strcpy(prog->name, cmdName);
-	/* NOW WE NEED TO GET OUR PATH */
+	getCmdName(prog->name, pid_dir,0);
 	return 0;
 }
+
 
 int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
 	/*TODO error handling misssing, removing all these nasty variables */
@@ -100,7 +91,10 @@ int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
 	int ppid = 0;
 	sprintf(cmdline_filename, "%s/cmdline", pid_dir);
 	cp = fopen(cmdline_filename, "r");
-	fgets(cmdline, sizeof(line), cp);
+	if (!cp) {
+		return -1;
+	}
+	fgets(cmdline, sizeof(cmdline), cp);
 	/*missing while cmdline[-1] thing unsure of what it does */
 	fclose(cp);
 
@@ -111,11 +105,15 @@ int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
 	/*missing check for (deleted) and (updated) */
 	exe = basename(path);
 	if (isParent) {
-		strcpy(cmdName, exe);
+		/*TODO: why does this work??? sizeof(cmdName) is 8?? */
+		snprintf(cmdName, sizeof(cmdName), "%s", exe);
 		return 0;
 	}
 	sprintf(status_filename, "%s/status", pid_dir);
 	pp = fopen(status_filename, "r");
+	if (!pp) {
+		return -1;
+	}
 	fgets(proc_status, sizeof(proc_status), pp);
 	sscanf(proc_status, "%*31[^:]: %s",cmd);
 	while(fgets(line, sizeof(line), pp)) {
@@ -128,7 +126,11 @@ int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
 		}
 	}
 	if (ppid) {
-		getCmdName(p_exe, pid_dir, 1);
+		int ret;
+		ret = getCmdName(p_exe, pid_dir, 1);
+		if (ret != 0) {
+			return ret;
+		}
 	}
 	if (strcmp(exe, p_exe)) {
 		strcpy(cmd, exe);

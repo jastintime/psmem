@@ -40,6 +40,56 @@ void prog_list_free(struct node **head) {
 		free(tmp);
 	}
 }
+void mergeSplit(struct node *head, struct node **front, struct node **back) {
+	struct node *fast,*slow;
+	if (head == NULL || head->next == NULL) {
+		*front = head;
+		*back = NULL;
+	} else {
+		slow = head;
+		fast = head->next;
+		while (fast != NULL) {
+			fast = fast->next;
+			if (fast != NULL) {
+				slow = slow->next;
+				fast = fast->next;
+			}
+		}
+		*front = head;
+		*back = slow->next;
+		slow->next = NULL;
+	}
 
-/*TODO sort this linked list */
+}
+struct node* mergeLists(struct node *a, struct node *b) {
+	struct node* mergedList;
+	mergedList = NULL;
+	if (a == NULL) {
+		return b;
+	}
+	if (b == NULL) {
+		return a;
+	}
+	if (a->prog.private_mem + a->prog.shared_mem <= b->prog.private_mem + b->prog.shared_mem) {
+		mergedList = a;
+		mergedList->next = mergeLists(a->next, b);
+	} else {
+		mergedList = b;
+		mergedList->next = mergeLists(a, b->next);
+	}
+	return mergedList;
+}
+
+void mergeSort(struct node **list) {
+	struct node *head, *a,*b;
+	head = *list;
+	if(head == NULL || head->next == NULL) {
+		return;
+	}
+	mergeSplit(head, &a, &b);
+	mergeSort(&a);
+	mergeSort(&b);
+
+	*list = mergeLists(a,b);
+}
 
