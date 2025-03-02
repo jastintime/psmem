@@ -51,7 +51,7 @@ int read_proc(struct program*, const char *pid_dir);
 int getCmdName(char* cmdName, const char* pid_dir, int isParent);
 
 /*
- * all_digits checks if a string is all numbers.
+ * all_digits reports if a string is all numbers.
  * returns 0 if the given string is all numbers and 1 if 
  * it contains any character that isn't a number.
  */

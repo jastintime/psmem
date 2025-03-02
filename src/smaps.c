@@ -4,6 +4,7 @@
 #include <libgen.h>
 #include "psmem.h"
 
+
 int read_proc(struct program* prog, const char *pid_dir) {
 	char line[BUFSIZ];
 	/* pid_dir = /proc/3152 
@@ -70,7 +71,9 @@ int read_proc(struct program* prog, const char *pid_dir) {
 	if(fclose(sp) == EOF) {
 		return -1;
 	}
-	getCmdName(prog->name, pid_dir,0);
+	if (getCmdName(prog->name, pid_dir,0) != 0) {
+		return -1;
+	}
 	return 0;
 }
 
@@ -82,13 +85,15 @@ int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
 	char cmdline[512];
 	char path_location[512];
 	char path[512];
-	char *exe;
+	char exe[512];
 	char status_filename[512];
 	char proc_status[512];
 	char cmd[512];
 	char line[512];
 	char p_exe[512];
 	int ppid = 0;
+	memset(&p_exe, 0, sizeof(p_exe)); 
+	memset(&path, 0, sizeof(path)); 
 	sprintf(cmdline_filename, "%s/cmdline", pid_dir);
 	cp = fopen(cmdline_filename, "r");
 	if (!cp) {
@@ -98,12 +103,13 @@ int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
 	/*missing while cmdline[-1] thing unsure of what it does */
 	fclose(cp);
 
-	memset(&p_exe, 0, sizeof(p_exe)); 
-	memset(&path, 0, sizeof(path)); 
 	sprintf(path_location, "%s/exe", pid_dir);
-	readlink(path_location, path, sizeof(path));
+	if (readlink(path_location, path, sizeof(path)) == -1) {
+		return -1;
+	}
 	/*missing check for (deleted) and (updated) */
-	exe = basename(path);
+	/*exe = basename(path);*/
+	sprintf(exe, "%s", basename(path));
 	if (isParent) {
 		/*TODO: why does this work??? sizeof(cmdName) is 8?? */
 		snprintf(cmdName, sizeof(cmdName), "%s", exe);
@@ -116,26 +122,33 @@ int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
 	}
 	fgets(proc_status, sizeof(proc_status), pp);
 	sscanf(proc_status, "%*31[^:]: %s",cmd);
-	while(fgets(line, sizeof(line), pp)) {
-		char key[512];
-		int value;
-		sscanf(line, "%31[^:]: %d", key, &value);;
-		if (strcmp(key, "PPid") == 0) { 
-			ppid = value;
-			break;
+	if (strncmp(cmd,exe,strlen(cmd)) == 0) {
+		/*strcpy(cmd, exe);*/
+		snprintf(cmd, sizeof(cmd), "%s", exe);
+	} else {
+		while(fgets(line, sizeof(line), pp)) {
+			char key[512];
+			int value;
+			sscanf(line, "%31[^:]: %d", key, &value);;
+			if (strcmp(key, "PPid") == 0) { 
+				ppid = value;
+				break;
+			}
+		}
+		if (ppid) {
+			int ret;
+			char newPath[512];
+			sprintf(newPath, "/proc/%d", ppid);
+			ret = getCmdName(p_exe, newPath, 1);
+			if (ret == 0) {
+				if (strcmp(exe, p_exe) == 0) {
+					snprintf(cmd, sizeof(cmd), "%s", exe);
+				}
+			}
 		}
 	}
-	if (ppid) {
-		int ret;
-		ret = getCmdName(p_exe, pid_dir, 1);
-		if (ret != 0) {
-			return ret;
-		}
-	}
-	if (strcmp(exe, p_exe)) {
-		strcpy(cmd, exe);
-	}
+	
 	fclose(pp);
-	strcpy(cmdName, cmd);
+	snprintf(cmdName, NAME_SIZE, "%s", cmd);
 	return 0;
 }

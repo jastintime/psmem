@@ -36,8 +36,7 @@ int main(void) {
 			if (strcmp(path, selfpath) == 0) {
 				continue;
 			}
-			read_proc(&curr_program, path);
-			if (curr_program.private_mem + curr_program.shared_mem < 0.0001) {
+			if (read_proc(&curr_program, path) != 0) {
 				continue;
 			}
 			prog_list_add(&head,curr_program);
