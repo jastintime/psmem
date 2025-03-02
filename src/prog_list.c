@@ -32,11 +32,12 @@ int prog_list_add(struct node **head, struct program prog) {
 	return 0;
 }
 
-void prog_list_free(struct node **head) {
-	struct node* tmp;
-	while (*head != NULL) {
-		tmp = *head;
-		*head = (*head)->next;
+void prog_list_free(struct node **list) {
+	struct node *tmp,*head;
+	head = *list;
+	while (head != NULL) {
+		tmp = head;
+		head = head->next;
 		free(tmp);
 	}
 }

@@ -7,12 +7,12 @@ void printHeader(void) {
 void printTotal(double total) {
 	printf("---------------------------------\n");
 	printf("%24s"," ");
-	calculateSize(total);
+	printFormatSize(total);
 	printf("\n=================================\n");
 
 }
 
-void calculateSize(double rawSize) {
+void printFormatSize(double rawSize) {
 	const char* const sizes[] = {"KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"};
 	int maxOrder = sizeof(sizes) / sizeof(sizes[0]);
 	int order = 0;
@@ -29,11 +29,11 @@ void calculateSize(double rawSize) {
 }
 
 void printSizes(struct program p) {
-	calculateSize(p.private_mem);
+	printFormatSize(p.private_mem);
 	printf(" + ");
-	calculateSize(p.shared_mem);
+	printFormatSize(p.shared_mem);
 	printf(" = ");
-	calculateSize(p.private_mem + p.shared_mem);
+	printFormatSize(p.private_mem + p.shared_mem);
 	printf("\t%.*s",NAME_SIZE - 1, p.name);
 	if (p.count > 0) {
 		printf(" (%d)", p.count + 1);
