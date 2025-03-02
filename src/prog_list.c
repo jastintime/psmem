@@ -40,7 +40,7 @@ void prog_list_free(struct node **head) {
 		free(tmp);
 	}
 }
-void mergeSplit(struct node *head, struct node **front, struct node **back) {
+static void mergeSplit(struct node *head, struct node **front, struct node **back) {
 	struct node *fast,*slow;
 	if (head == NULL || head->next == NULL) {
 		*front = head;
@@ -61,7 +61,7 @@ void mergeSplit(struct node *head, struct node **front, struct node **back) {
 	}
 
 }
-struct node* mergeLists(struct node *a, struct node *b) {
+static struct node* mergeLists(struct node *a, struct node *b) {
 	struct node* mergedList;
 	mergedList = NULL;
 	if (a == NULL) {
