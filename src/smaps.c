@@ -58,7 +58,7 @@ int read_proc(struct program* prog, const char *pid_dir) {
 				have_pss = 1;
 				pss += value + 0.5; 
 			}
-	}
+		}
 	}
 	if (have_pss) {
 		shared = pss - private;
@@ -108,7 +108,6 @@ int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
 		return -1;
 	}
 	/*missing check for (deleted) and (updated) */
-	/*exe = basename(path);*/
 	sprintf(exe, "%s", basename(path));
 	if (isParent) {
 		/*TODO: why does this work??? sizeof(cmdName) is 8?? */
@@ -123,7 +122,6 @@ int getCmdName(char* cmdName, const char* pid_dir, int isParent) {
 	fgets(proc_status, sizeof(proc_status), pp);
 	sscanf(proc_status, "%*31[^:]: %s",cmd);
 	if (strncmp(cmd,exe,strlen(cmd)) == 0) {
-		/*strcpy(cmd, exe);*/
 		snprintf(cmd, sizeof(cmd), "%s", exe);
 	} else {
 		while(fgets(line, sizeof(line), pp)) {

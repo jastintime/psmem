@@ -24,7 +24,7 @@ void printFormatSize(double rawSize) {
 	if (order == maxOrder) {
 		printf("%9s","MEMOUT");
 	} else {
-	printf("%5.1f %3s", rawSize, sizes[order]);
+		printf("%5.1f %3s", rawSize, sizes[order]);
 	}
 }
 

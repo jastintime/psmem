@@ -1,4 +1,4 @@
-#define NAME_SIZE 512
+#define NAME_SIZE 256
 
 /* program stores memory usage, a name and a count.
  * read_proc fills this struct, printSizes prints this struct.

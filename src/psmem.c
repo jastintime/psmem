@@ -23,7 +23,7 @@ int main(void) {
 	struct dirent *curr;
 	struct node *head,*currnode;
 	head = NULL;
-	sprintf(selfpath, "/proc/%ld",(long) getpid());
+	sprintf(selfpath, "/proc/%ld", (long) getpid());
 	/*initalize our struct for safety, worst case scenario we print all zeroes */
 	memset(&curr_program, 0, sizeof(curr_program)); 
 	if (!dp) {
