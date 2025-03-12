@@ -5,6 +5,8 @@ psmem
 
 A clone of [ps\_mem](https://github.com/pixelb/ps_mem) written in C. 
 
+![An imagine showing psmem running](example.png)
+
 ## Features
 * List all your current running processes and their ram usage.
 * Runs without root permissions, although running with root permissions provides more accurate results.

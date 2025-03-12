@@ -9,7 +9,7 @@ int read_proc(struct program* prog, const char *pid_dir) {
 	char line[BUFSIZ];
 	/* pid_dir = /proc/3152 
 	 * pid_max 32 bit is 32768 
-	 * sp is smaps_rollup, cp is cmdline */
+	 * sp is smaps_rollup */
 	FILE *sp;
 	double private = 0;
 	double private_huge = 0;

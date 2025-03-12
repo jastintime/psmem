@@ -27,7 +27,7 @@ int main(void) {
 	if (sprintf(selfpath, "%ld", (long) getpid()) < 0) {
 		return 1;
 	}
-	/*initalize our struct for safety, worst case scenario we print all zeroes */
+
 	memset(&curr_program, 0, sizeof(curr_program)); 
 	if (!dp) {
 		return 1;
