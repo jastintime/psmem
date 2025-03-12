@@ -76,7 +76,6 @@ static int getParentName(char* cmdName, const char* pid_dir) {
 	FILE *cp;
 	char cmdline[BUFSIZ];
 	char path[PATH_SIZE];
-	char exe[PATH_SIZE];
 	memset(&path, 0, sizeof(path));
 	cp = fopen("cmdline", "r");
 	chdir(pid_dir);
@@ -94,10 +93,7 @@ static int getParentName(char* cmdName, const char* pid_dir) {
 		return -1;
 	}
 	/*missing check for (deleted) and (updated) */
-	if (snprintf(exe,sizeof(exe), "%s", basename(path)) < 0) {
-		return -1;
-	}
-	if (snprintf(cmdName, sizeof(cmdName), "%s", exe) < 0) {
+	if (snprintf(cmdName, sizeof(cmdName), "%s", basename(path)) < 0) {
 		return -1;
 	}
 	return 0;
