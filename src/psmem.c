@@ -15,7 +15,7 @@ int all_digits(const char *str) {
 
 
 int main(void) {
-	DIR* dp = opendir("/proc");
+	DIR* dp = opendir(PROC_DIRECTORY);
 	char path[PATH_SIZE];
 	char selfpath[PATH_SIZE];
 	double total = 0.0;
@@ -24,7 +24,7 @@ int main(void) {
 	struct node *head,*currnode;
 	head = NULL;
 
-	if (sprintf(selfpath, "/proc/%ld", (long) getpid()) < 0) {
+	if (sprintf(selfpath, "%ld", (long) getpid()) < 0) {
 		return 1;
 	}
 	/*initalize our struct for safety, worst case scenario we print all zeroes */
@@ -34,9 +34,10 @@ int main(void) {
 	}
 	printHeader();
 	while((curr = readdir(dp))) {
+		chdir(PROC_DIRECTORY);
 		if(curr->d_type == DT_DIR && all_digits(curr->d_name) == 0) {
-			sprintf(path, "/proc/%s", curr->d_name);
-			if (strcmp(path, selfpath) == 0) {
+			sprintf(path, PROC_DIRECTORY"%s", curr->d_name);
+			if (strcmp(curr->d_name, selfpath) == 0) {
 				continue;
 			}
 			if (read_proc(&curr_program, path) != 0) {

@@ -11,20 +11,17 @@ int read_proc(struct program* prog, const char *pid_dir) {
 	 * pid_max 32 bit is 32768 
 	 * sp is smaps_rollup, cp is cmdline */
 	FILE *sp;
-	char smaps_rollup[PATH_SIZE + sizeof("smaps_rollup")];
 	double private = 0;
 	double private_huge = 0;
-	double shared_huge = 0;
+	/*double shared_huge = 0;*/
 	double pss = 0;
 	double shared = 0;
 	int have_pss = 0;
+	chdir(pid_dir);
 	/* need to deal with the case that we have a really long
 	 * absolute directory, perhaps change to just cd'ing into
 	 * /proc and doing all our magic there */
-	if (snprintf(smaps_rollup,sizeof(smaps_rollup), "%s/smaps_rollup", pid_dir) < 0) {
-		return -1;
-	}
-	sp = fopen(smaps_rollup, "r");
+	sp = fopen("smaps_rollup", "r");
 	if (!sp) {
 		return -1;
 	}
@@ -50,7 +47,7 @@ int read_proc(struct program* prog, const char *pid_dir) {
 				shared += value;
 			}
 			if (strcmp(key, "Shared_Hugetlb") == 0) { 
-				shared_huge += value;
+			/*	shared_huge += value;*/
 			}
 			if (strcmp(key, "Pss") == 0) { 
 				have_pss = 1;
@@ -76,17 +73,13 @@ int read_proc(struct program* prog, const char *pid_dir) {
 }
 
 static int getParentName(char* cmdName, const char* pid_dir) {
-	char cmdline_filename[PATH_SIZE + sizeof("cmdline")];
 	FILE *cp;
 	char cmdline[BUFSIZ];
-	char path_location[PATH_SIZE + sizeof("exe")];
-	char path[sizeof(path_location)];
-	char exe[sizeof(path_location)];
+	char path[PATH_SIZE];
+	char exe[PATH_SIZE];
 	memset(&path, 0, sizeof(path));
-	if ((snprintf(cmdline_filename, sizeof(cmdline_filename),"%s/cmdline", pid_dir) < 0)) {
-		return -1;
-	}
-	cp = fopen(cmdline_filename, "r");
+	cp = fopen("cmdline", "r");
+	chdir(pid_dir);
 	if (!cp) {
 		return -1;
 	}
@@ -97,11 +90,7 @@ static int getParentName(char* cmdName, const char* pid_dir) {
 	if (fclose(cp) == EOF) {
 		return -1;
 	}
-
-	if (snprintf(path_location,sizeof(path_location), "%s/exe", pid_dir) < 0) {
-		return -1;
-	}
-	if (readlink(path_location, path, sizeof(path)) == -1) {
+	if (readlink("exe", path, sizeof(path)) == -1) {
 		return -1;
 	}
 	/*missing check for (deleted) and (updated) */
@@ -115,24 +104,19 @@ static int getParentName(char* cmdName, const char* pid_dir) {
 }
 
 int getCmdName(char* cmdName, const char* pid_dir) {
-	char cmdline_filename[PATH_SIZE + sizeof("cmdline")];
 	char cmdline[BUFSIZ];
 	FILE *cp,*pp;
-	char path[PATH_SIZE + sizeof("exe")];
-	char path_location[sizeof(path)];
-	char exe[sizeof(path)];
-	char status_filename[PATH_SIZE + sizeof("status")];
+	char path[PATH_SIZE];
+	char exe[PATH_SIZE];
 	char proc_status[BUFSIZ];
 	char cmd[BUFSIZ];
 	char line[BUFSIZ];
-	char p_exe[sizeof(path)];
+	char p_exe[PATH_SIZE];
 	int ppid = 0;
+	chdir(pid_dir);
 	memset(&p_exe, 0, sizeof(p_exe)); 
 	memset(&path, 0, sizeof(path)); 
-	if (snprintf(cmdline_filename,sizeof(cmdline_filename), "%s/cmdline", pid_dir) < 0) {
-		return -1;
-	}
-	cp = fopen(cmdline_filename, "r");
+	cp = fopen("cmdline", "r");
 	if (!cp) {
 		return -1;
 	}
@@ -143,11 +127,7 @@ int getCmdName(char* cmdName, const char* pid_dir) {
 	if (fclose(cp) == EOF) {
 		return -1;
 	}
-
-	if (snprintf(path_location,sizeof(path_location), "%s/exe", pid_dir) < 0) {
-		return -1;
-	}
-	if (readlink(path_location, path, sizeof(path)) == -1) {
+	if (readlink("exe", path, sizeof(path)) == -1) {
 		return -1;
 	}
 
@@ -156,10 +136,7 @@ int getCmdName(char* cmdName, const char* pid_dir) {
 	if (snprintf(exe,sizeof(exe), "%s", basename(path)) < 0) {
 		return -1;
 	}
-	if (snprintf(status_filename,sizeof(status_filename), "%s/status", pid_dir) < 0) {
-		return -1;
-	}
-	pp = fopen(status_filename, "r");
+	pp = fopen("status", "r");
 	if (!pp) {
 		return -1;
 	}
