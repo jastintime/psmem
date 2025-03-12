@@ -16,14 +16,17 @@ int all_digits(const char *str) {
 
 int main(void) {
 	DIR* dp = opendir("/proc");
-	char path[16384];
-	char selfpath[16384];
+	char path[PATH_SIZE];
+	char selfpath[PATH_SIZE];
 	double total = 0.0;
 	struct program curr_program;
 	struct dirent *curr;
 	struct node *head,*currnode;
 	head = NULL;
-	sprintf(selfpath, "/proc/%ld", (long) getpid());
+
+	if (sprintf(selfpath, "/proc/%ld", (long) getpid()) < 0) {
+		return 1;
+	}
 	/*initalize our struct for safety, worst case scenario we print all zeroes */
 	memset(&curr_program, 0, sizeof(curr_program)); 
 	if (!dp) {
@@ -39,7 +42,9 @@ int main(void) {
 			if (read_proc(&curr_program, path) != 0) {
 				continue;
 			}
-			prog_list_add(&head,curr_program);
+			if (prog_list_add(&head,curr_program) < 0) {
+				return 1;
+			}
 			total += curr_program.private_mem + curr_program.shared_mem;
 		}
 	}

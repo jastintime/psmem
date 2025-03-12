@@ -11,7 +11,7 @@ A clone of [ps\_mem](https://github.com/pixelb/ps_mem) written in C.
 
 ## Dependencies
 
-psmem requires POSIX make, an ANSI C compiler, the feature macro `DEFAULT_SOURCE`, `stdio.h`, `string.h` and `dirent.h`.
+psmem requires POSIX make, an ANSI C compiler, the feature macro `DEFAULT_SOURCE`, `stdio.h`, `stdlib.h`, `string.h`, `unistd.h`, `libgen.h` and `dirent.h`.
 
 ## Installing
 
@@ -29,15 +29,11 @@ psmem is written in a plain C style, try to avoid introducing new dependencies a
 
 ## Todo
 
-- [ ] Cleanup getCmdName
-- [ ] remove strings.h dependency by replacing strcomp
-- [ ] Write tests
-- [ ] Check if proc is actually proc before doing anything
-- [ ] Check if `smaps` is enabled in `/proc/config.gz`
+- [ ] Fuzzy test
+- [ ] Write install target in makefile.
 - [ ] Fallback to `smaps` if we cannot find `smaps_rollup`
 - [ ] implement a -v option to list current version
 - [ ] implement freebsd support, requires viewing uname and setting proc accordingly
-- [ ] static binary, [cosmopolitan libc](https://github.com/jart/cosmopolitan) possibly
 - [ ] write a manpage
     - [ ] determine if -h is a good idea or if the manpage is good enough.
 

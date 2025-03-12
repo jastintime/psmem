@@ -1,4 +1,5 @@
 #define NAME_SIZE 256
+#define PATH_SIZE 4096
 
 /* program stores memory usage, a name and a count.
  * read_proc fills this struct, printSizes prints this struct.
@@ -38,9 +39,7 @@ void printTotal(double);
  * read_proc fills a program struct with the information 
  * available at pid_dir, a string of the pid directory in the
  * /proc/INT format.
- * return 0 on success,
- * errno setting error -1
- * -2 means an error that doesn't set errno.
+ * return 0 on success, -1 on failure.
  */
 int read_proc(struct program*, const char *pid_dir);
 
@@ -48,7 +47,7 @@ int read_proc(struct program*, const char *pid_dir);
  * getCmdName writes the command name of the process in the
  * given pid directory to the cmdName string.
 */
-int getCmdName(char* cmdName, const char* pid_dir, int isParent);
+int getCmdName(char* cmdName, const char* pid_dir);
 
 /*
  * all_digits reports if a string is all numbers.
