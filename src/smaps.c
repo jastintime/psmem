@@ -169,11 +169,15 @@ int getCmdName(char* cmdName, const char* pid_dir) {
 		if (ppid) {
 			int ret;
 			char newPath[PATH_SIZE];
-			snprintf(newPath,sizeof(newPath), "/proc/%d", ppid);
+			if (snprintf(newPath,sizeof(newPath), "/proc/%d", ppid) < 0) {
+				fclose(pp);
+				return -1;
+			}
 			ret = getParentName(p_exe, newPath);
-			if (ret == 0) {
-				if (strcmp(exe, p_exe) == 0) {
-					snprintf(cmd, sizeof(cmd), "%s", exe);
+			if (ret == 0 && strcmp(exe,p_exe) == 0) {
+				if (snprintf(cmd, sizeof(cmd), "%s", exe) < 0) {
+					fclose(pp);
+					return -1;
 				}
 			}
 		}
