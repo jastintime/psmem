@@ -14,7 +14,7 @@ int all_digits(const char *str) {
 }
 
 
-int main(void) {
+int main(int argc, char **argv) {
 	DIR* dp = opendir(PROC_DIRECTORY);
 	char path[PATH_SIZE];
 	char selfpath[PATH_SIZE];
@@ -23,13 +23,23 @@ int main(void) {
 	struct dirent *curr;
 	struct node *head,*currnode;
 	head = NULL;
+	memset(&curr_program, 0, sizeof(curr_program)); 
 	if (!dp) {
 		return 1;
+	}
+	(void) argv;
+	if (argc > 1) {
+		printf("psmem version 1.0\n");
+		printf("Usage: psmem [NO OPTIONS]\n\n");
+		printf("report memory usage of running programs.\n");
+		printf("running psmem with superuser permissions will provide more accurate results.\n");
+		printf("\nTry `man psmem` for more information.\n");
+		printf("Report bugs to <https://github.com/jastintime/psmem/issues>\n");
+		return 0;
 	}
 	if (snprintf(selfpath,sizeof(selfpath), "%ld", (long) getpid()) < 0) {
 		return 1;
 	}
-	memset(&curr_program, 0, sizeof(curr_program)); 
 	printHeader();
 	while((curr = readdir(dp))) {
 		if (chdir(PROC_DIRECTORY) < 0) {
