@@ -26,7 +26,7 @@ int main(void) {
 	if (!dp) {
 		return 1;
 	}
-	if (sprintf(selfpath, "%ld", (long) getpid()) < 0) {
+	if (snprintf(selfpath,sizeof(selfpath), "%ld", (long) getpid()) < 0) {
 		return 1;
 	}
 	memset(&curr_program, 0, sizeof(curr_program)); 
@@ -36,7 +36,9 @@ int main(void) {
 			return 1;
 		}
 		if(curr->d_type == DT_DIR && all_digits(curr->d_name) == 0) {
-			sprintf(path, PROC_DIRECTORY"%s", curr->d_name);
+			if (snprintf(path,sizeof(path), PROC_DIRECTORY"%s", curr->d_name) < 0) {
+				return 1;
+			}
 			if (strcmp(curr->d_name, selfpath) == 0) {
 				continue;
 			}
