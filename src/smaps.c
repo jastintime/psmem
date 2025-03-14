@@ -17,7 +17,9 @@ int read_proc(struct program* prog, const char *pid_dir) {
 	double pss = 0;
 	double shared = 0;
 	int have_pss = 0;
-	chdir(pid_dir);
+	if (chdir(pid_dir) < 0) {
+		return -1;
+	}
 	/* need to deal with the case that we have a really long
 	 * absolute directory, perhaps change to just cd'ing into
 	 * /proc and doing all our magic there */
@@ -78,7 +80,9 @@ static int getParentName(char* cmdName, const char* pid_dir) {
 	char path[PATH_SIZE];
 	memset(&path, 0, sizeof(path));
 	cp = fopen("cmdline", "r");
-	chdir(pid_dir);
+	if (chdir(pid_dir) < 0) {
+		return -1;
+	}
 	if (!cp) {
 		return -1;
 	}
@@ -93,7 +97,7 @@ static int getParentName(char* cmdName, const char* pid_dir) {
 		return -1;
 	}
 	/*missing check for (deleted) and (updated) */
-	if (snprintf(cmdName, sizeof(cmdName), "%s", basename(path)) < 0) {
+	if (snprintf(cmdName, NAME_SIZE, "%s", basename(path)) < 0) {
 		return -1;
 	}
 	return 0;
@@ -109,7 +113,9 @@ int getCmdName(char* cmdName, const char* pid_dir) {
 	char line[BUFSIZ];
 	char p_exe[PATH_SIZE];
 	int ppid = 0;
-	chdir(pid_dir);
+	if (chdir(pid_dir) ) {
+		return -1;
+	}
 	memset(&p_exe, 0, sizeof(p_exe)); 
 	memset(&path, 0, sizeof(path)); 
 	cp = fopen("cmdline", "r");

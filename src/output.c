@@ -16,7 +16,7 @@ void printFormatSize(double rawSize) {
 	const char* const sizes[] = {"KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"};
 	int maxOrder = sizeof(sizes) / sizeof(sizes[0]);
 	int order = 0;
-	while (rawSize >= 1000 && order <  maxOrder) {
+	while (rawSize >= 1000 && order < maxOrder) {
 		rawSize /= 1024.0;
 		order++;
 	}

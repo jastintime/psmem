@@ -34,7 +34,9 @@ int main(void) {
 	}
 	printHeader();
 	while((curr = readdir(dp))) {
-		chdir(PROC_DIRECTORY);
+		if (chdir(PROC_DIRECTORY) < 0) {
+			return 1;
+		}
 		if(curr->d_type == DT_DIR && all_digits(curr->d_name) == 0) {
 			sprintf(path, PROC_DIRECTORY"%s", curr->d_name);
 			if (strcmp(curr->d_name, selfpath) == 0) {
