@@ -39,7 +39,6 @@ psmem is written in a plain C style, try to avoid introducing new dependencies a
 
 ## Todo
 
-- [ ] Fuzzy test
 - [ ] Fallback to `smaps` if we cannot find `smaps_rollup`
 
 
