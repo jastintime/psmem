@@ -79,10 +79,10 @@ static int getParentName(char* cmdName, const char* pid_dir) {
 	char cmdline[BUFSIZ];
 	char path[PATH_SIZE];
 	memset(&path, 0, sizeof(path));
-	cp = fopen("cmdline", "r");
 	if (chdir(pid_dir) < 0) {
 		return -1;
 	}
+	cp = fopen("cmdline", "r");
 	if (!cp) {
 		return -1;
 	}
