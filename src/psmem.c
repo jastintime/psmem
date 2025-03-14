@@ -23,15 +23,13 @@ int main(void) {
 	struct dirent *curr;
 	struct node *head,*currnode;
 	head = NULL;
-
-	if (sprintf(selfpath, "%ld", (long) getpid()) < 0) {
-		return 1;
-	}
-
-	memset(&curr_program, 0, sizeof(curr_program)); 
 	if (!dp) {
 		return 1;
 	}
+	if (sprintf(selfpath, "%ld", (long) getpid()) < 0) {
+		return 1;
+	}
+	memset(&curr_program, 0, sizeof(curr_program)); 
 	printHeader();
 	while((curr = readdir(dp))) {
 		if (chdir(PROC_DIRECTORY) < 0) {
@@ -53,13 +51,15 @@ int main(void) {
 	}
 	mergeSort(&head);
 	currnode = head;
-	while (currnode != NULL) {
+	while (currnode) {
 		printSizes(currnode->prog);
 		currnode = currnode->next;
 	}
 	prog_list_free(&head);
 	printTotal(total);
-	closedir(dp);
+	if (closedir(dp) < 0) {
+		return 1;
+	}
 	return 0;
 
 }

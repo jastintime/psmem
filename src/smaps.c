@@ -31,8 +31,8 @@ int read_proc(struct program* prog, const char *pid_dir) {
 		char key[32];
 		double value;
 		/* read key until : ignoring :, then get our number*/
-		int ref = sscanf(line, "%31[^:]: %lf", key, &value);
-		if (ref == 2) {
+		int ret = sscanf(line, "%31[^:]: %lf", key, &value);
+		if (ret == 2) {
 			if (strcmp(key, "Private_Clean") == 0) { 
 				private += value;
 			}
@@ -87,6 +87,7 @@ static int getParentName(char* cmdName, const char* pid_dir) {
 		return -1;
 	}
 	if (!fgets(cmdline, sizeof(cmdline), cp)) {
+		fclose(cp);
 		return -1;
 	}
 	/*missing while cmdline[-1] thing unsure of what it does */
@@ -113,7 +114,7 @@ int getCmdName(char* cmdName, const char* pid_dir) {
 	char line[BUFSIZ];
 	char p_exe[PATH_SIZE];
 	int ppid = 0;
-	if (chdir(pid_dir) ) {
+	if (chdir(pid_dir) < 0) {
 		return -1;
 	}
 	memset(&p_exe, 0, sizeof(p_exe)); 
@@ -143,21 +144,24 @@ int getCmdName(char* cmdName, const char* pid_dir) {
 		return -1;
 	}
 	if (!fgets(proc_status, sizeof(proc_status), pp)) {
+		fclose(pp);
 		return -1;
 	}
 	if (sscanf(proc_status, "%*31[^:]: %s",cmd) == EOF) {
+		fclose(pp);
 		return -1;
 	}
 	if (strncmp(cmd,exe,strlen(cmd)) == 0) {
 		if (snprintf(cmd, sizeof(cmd), "%s", exe) < 0) {
+			fclose(pp);
 			return -1;
 		}
 	} else {
 		while(fgets(line, sizeof(line), pp)) {
 			char key[32];
 			int value;
-			sscanf(line, "%31[^:]: %d", key, &value);;
-			if (strcmp(key, "PPid") == 0) { 
+			int ret = sscanf(line, "%31[^:]: %d", key, &value);
+			if (ret == 2 && strcmp(key, "PPid") == 0) { 
 				ppid = value;
 				break;
 			}
